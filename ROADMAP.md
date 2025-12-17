@@ -6,17 +6,12 @@
 
 ✅-DONE, ⚠️-BUG, ❌-NOT DONE
 ## Short-Term Goals
-- [ ] Registry signing
-- [ ] SQLite persistence
 - [ ] Rate limiting
 - [ ] Malicious node detection
-- [ ] CRDT (Conflict-free Replicated Data Type) registry merges
-- [ ] Persist registry state to SQLite
-- [ ] Sign snapshots
-- [ ] Registry mirrors (read-only)
-- [ ] IPNS pointer for snapshots
-- [ ] Integrate upload → CID register in React
+- [ ] Integrate upload from and CID creation from web app
+- [ ] Split critical site and video replication rules
 
 
 ## Long-Term Goals
-- [ ] Multiple registries for decentralization
+- [ ] Graceful shutdown
+- [ ] Incentives - user tech debt feature on UNet
