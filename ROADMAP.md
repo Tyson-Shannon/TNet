@@ -1,19 +1,24 @@
 # UNet Roadmap
 
 ## Current State
-- ✅ Basic code logic
+- ✅ Basic code for creating an ipfs pinning node
 - ✅ Fixed python library ipfshttpclient version match error by switching to subprocesses instead
-- ⚠️ PUBSUB publish failed error (might be windows issue - test linux)
+- ✅ Fixed PUBSUB publish failed error (need to enable ipfs PUBSUB before running daemon)
+- ✅ Node's can pin data, discover each other, gossip, ensure replication of data, and remove dead nodes
+- ❌ Integrate upload and CID creation from web app
 
 ✅-DONE, ⚠️-BUG, ❌-NOT DONE
 ## Short-Term Goals
+- [ ] Split critical site and video replication rules
+- [ ] Re-Pin lost data when a node goes offline
+- [ ] Remove data from node that died and revived
 - [ ] Rate limiting
 - [ ] Malicious node detection
-- [ ] Integrate upload from and CID creation from web app
-- [ ] Split critical site and video replication rules
 
 
 ## Long-Term Goals
 - [ ] Graceful shutdown
 - [ ] Incentives - user tech debt feature on UNet
 - [ ] Dashboards for system health and information
+- [ ] Conflict resolution logic
+- [ ] Network-wide storage totals
