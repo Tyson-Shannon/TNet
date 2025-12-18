@@ -210,7 +210,7 @@ def prune_dead_nodes():
         time.sleep(60)
 
 # START
-print(f"UNet node started: {NODE_ID}")
+print(f"TNet node started: {NODE_ID}")
 
 threading.Thread(target=gossip_announce, daemon=True).start()
 threading.Thread(target=pubsub_subscribe, args=(handle_gossip,), daemon=True).start()
