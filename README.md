@@ -5,7 +5,7 @@ The **"Terminus Network"** is an IPFS/IPNS pinning network for [UNet](https://gi
 This code will allow users to turn their computers into nodes for hosting UNet content.
 
 ## Setup
-You should have python, pip, and ipfs installed. <br />
+You should have python, pip, and [ipfs](https://docs.ipfs.tech/install/command-line/#install-official-binary-distributions) installed. <br />
 You should navigate to the file with node.py and download the necessary libraries.
 ```
 pip install -r REQUIREMENTS.txt

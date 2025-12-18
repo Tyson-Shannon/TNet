@@ -2,7 +2,8 @@
 
 ## Current State
 - ✅ Basic code logic
-- ❌ Test code
+- ✅ Fixed python library ipfshttpclient version match error by switching to subprocesses instead
+- ⚠️ PUBSUB publish failed error (might be windows issue - test linux)
 
 ✅-DONE, ⚠️-BUG, ❌-NOT DONE
 ## Short-Term Goals
@@ -15,3 +16,4 @@
 ## Long-Term Goals
 - [ ] Graceful shutdown
 - [ ] Incentives - user tech debt feature on UNet
+- [ ] Dashboards for system health and information
