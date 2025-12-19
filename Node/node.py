@@ -13,6 +13,23 @@ from typing import Set
 import subprocess
 import socket
 
+# INTRO
+print(r''' 
+   0   0
+    \ /
+0----0----0
+    /|\
+   0 | 0
+     0
+    /|\
+   0 | 0
+     0
+    /|\
+   0 | 0
+     0
+Concedo Nulli
+''')
+
 # NODE ID
 #get ipfs peer id or fallback to host name
 def get_node_id():
@@ -32,7 +49,13 @@ def get_node_id():
 PUBSUB_TOPIC = "tnet-gossip"
 ANNOUNCE_INTERVAL = 30
 TARGET_REPLICAS = 3
-MAX_STORAGE_GB = 100  #user-defined allocation
+#user-defined storage allocation
+MAX_STORAGE_GB = -1
+while(MAX_STORAGE_GB <= 0):
+    try:
+        MAX_STORAGE_GB = float(input("Max gigabytes node can use for storage (positive non zero value, if unsure input 'inf' for system max): "))
+    except:
+        print("Wrong data type, enter a float\n")
 NODE_TIMEOUT = 120
 NODE_ID = get_node_id()
 
@@ -81,6 +104,7 @@ def run_ipfs_command(cmd: list) -> str:
         raise RuntimeError(f"IPFS command failed: {cmd}\n{result.stderr}")
     return result.stdout.strip()
 
+#gets list of locally stored cids
 def get_local_cids() -> Set[str]:
     """Return set of locally pinned CIDs."""
     try:
@@ -88,6 +112,10 @@ def get_local_cids() -> Set[str]:
         return set(output.splitlines())
     except:
         return set()
+
+#takes cid and checks if its already pinned returns true or false
+def has_cid(cid: str) -> bool:
+    return cid in get_local_cids()
 
 def available_storage():
     """Estimate available storage for new pins."""
@@ -168,38 +196,56 @@ def handle_gossip(msg):
 
     conn.commit()
     cur.close()
-    time.sleep(60)
 
 # DATA PLANE
 def pin_cid(cid):
+    #if cid already pinned on node skip
+    if has_cid(cid):
+        return
+    #if node storage full skip
+    if available_storage() <= 0:
+        return
     cur = conn.cursor()
-    print(f"[PIN] {cid}")
+    print(f"[PIN] Healing replica: {cid}")
     try:
         run_ipfs_command(["ipfs", "pin", "add", cid])
-        cur.execute("INSERT OR IGNORE INTO replicas VALUES (?, ?)", (cid, NODE_ID))
+        cur.execute(
+            "INSERT OR IGNORE INTO replicas VALUES (?, ?)",
+            (cid, NODE_ID)
+        )
         conn.commit()
+        print(f"[PIN] Success: {cid}")
     except Exception as e:
         print("[PIN] failed:", e)
     cur.close()
 
+
 def enforce_replication():
     while True:
         cur = conn.cursor()
-        cur.execute("SELECT cid FROM cids")
-        for (cid,) in cur.fetchall():
-            cur.execute("SELECT COUNT(*) FROM replicas WHERE cid=?", (cid,))
-            replicas = cur.fetchone()[0]
-
-            if replicas < TARGET_REPLICAS and available_storage() > 0:
-                pin_cid(cid)
+        cur.execute("""
+            SELECT c.cid, COUNT(r.node_id) as replica_count
+            FROM cids c
+            LEFT JOIN replicas r ON c.cid = r.cid
+            GROUP BY c.cid
+        """)
+        for cid, replica_count in cur.fetchall():
+            if replica_count < TARGET_REPLICAS:
+                if not has_cid(cid):
+                    pin_cid(cid)
         cur.close()
-        time.sleep(60)
+        time.sleep(30)
+
 
 # HEALTH
 def prune_dead_nodes():
     while True:
         cur = conn.cursor()
         cutoff = now() - NODE_TIMEOUT
+        cur.execute("SELECT node_id FROM nodes WHERE last_seen < ?", (cutoff,))
+        dead = [row[0] for row in cur.fetchall()]
+        if dead:
+            print("[HEALTH] Dead nodes detected:", dead)
         cur.execute("DELETE FROM nodes WHERE last_seen < ?", (cutoff,))
         cur.execute("""
             DELETE FROM replicas
@@ -207,7 +253,8 @@ def prune_dead_nodes():
         """)
         conn.commit()
         cur.close()
-        time.sleep(60)
+        time.sleep(30)
+
 
 # START
 print(f"TNet node started: {NODE_ID}")

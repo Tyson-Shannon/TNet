@@ -5,12 +5,13 @@
 - ✅ Fixed python library ipfshttpclient version match error by switching to subprocesses instead
 - ✅ Fixed PUBSUB publish failed error (need to enable ipfs PUBSUB before running daemon)
 - ✅ Node's can pin data, discover each other, gossip, ensure replication of data, and remove dead nodes
+- ✅ Check if enough storage to pin CID
+- ✅ Re-Pin lost data when a node goes offline
 - ❌ Integrate upload and CID creation from web app
 
 ✅-DONE, ⚠️-BUG, ❌-NOT DONE
 ## Short-Term Goals
 - [ ] Split critical site and video replication rules
-- [ ] Re-Pin lost data when a node goes offline
 - [ ] Remove data from node that died and revived
 - [ ] Rate limiting
 - [ ] Malicious node detection
