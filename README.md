@@ -4,15 +4,25 @@ The **"Terminus Network"** is an IPFS/IPNS pinning network for [UNet](https://gi
 ## Goal
 This code will allow users to turn their computers into nodes for hosting UNet content.
 
+## The Network
+<img width="581" height="570" alt="UNet-TNet drawio" src="https://github.com/user-attachments/assets/cb30c881-00b3-456c-9a45-7a6395e2b8d9" /> <br />
+
 ## Setup
 You should have python and [ipfs](https://docs.ipfs.tech/install/command-line/#install-official-binary-distributions) installed. <br />
 
-Set up ipfs PUBSUB (comonly not enabled by default, only need to run this once)
+Set up ipfs PUBSUB (comonly not enabled by default, only need to run this once).
 ```
 ipfs config --json Pubsub.Enabled true
 ```
-then run your ipfs daemon.
+Then run your ipfs daemon.
 ```
 ipfs daemon
 ```
-then run the node.py file.
+Then run the node.py file.
+```
+python3 node.py
+```
+You will be prompted to enter the amount of GB to allow your node to use for storage. Enter a value or enter 'inf' to use your full system storage.
+```
+inf
+```
